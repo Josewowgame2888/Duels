@@ -75,7 +75,7 @@ class DamageEvent implements Listener
                    }
                    if($item->getId() === Item::DIAMOND_SWORD && $player->getHealth() < 40)
                    {
-                       $max = $item->getCustomName();
+                       $max = (int) $item->getCustomName();
                        $new = $max-1;
                        $player->getInventory()->setItem(1,Item::get(Item::GOLDEN_APPLE,0, $new)->setCustomName($new));
                        $player->setHealth($player->getHealth()+5.1);
