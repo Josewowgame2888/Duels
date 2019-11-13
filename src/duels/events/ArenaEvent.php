@@ -122,7 +122,7 @@ class ArenaEvent implements Listener
             if ($files !== '..' && $files !== '.') 
             {
                $name = str_replace('.conf', '', $files);
-               if($event->getPlayer()->getLevel()->getFolderName() === Duels::getConfigGame()->getLevel($name))
+               if($palyer->getLevel()->getFolderName() === Duels::getConfigGame()->getLevel($name))
                {
                    if($event->getCause() === EntityDamageEvent::CAUSE_SUFFOCATION || $event->getCause() === EntityDamageEvent::CAUSE_FALL)
                    {
