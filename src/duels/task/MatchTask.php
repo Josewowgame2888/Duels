@@ -33,7 +33,7 @@ class MatchTask extends Task
                 {
                     //initials events
                     $modes = [
-                        GameMode::GAME_MODE_BUILDUHC,
+                        GameMode::GAME_MODE_CLASSIC,
                         GameMode::GAME_MODE_POTIONS,
                         GameMode::GAME_MODE_SOUP
                     ];
