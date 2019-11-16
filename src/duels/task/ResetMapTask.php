@@ -8,7 +8,7 @@ class ResetMapTask extends Task
 {
 
     private $arena;
-    private $sleep = 4;
+    private $sleep = 5;
     public function __construct(string $arena)
     {
        $this->arena = $arena; 
@@ -34,7 +34,10 @@ class ResetMapTask extends Task
         }
         if($this->sleep === 1)
         {
-            Duels::getMain()->getServer()->loadLevel($this->arena);
+            Duels::getMain()->getServer()->loadLevel(Duels::getConfigGame()->getLevel($this->arena));
+            $level = Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($this->arena));
+            $level->setTime(0);
+            $level->stopTime();
         }
 
         if($this->sleep === 0)
