@@ -38,6 +38,10 @@ class ResetMapTask extends Task
             $level = Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($this->arena));
             $level->setTime(0);
             $level->stopTime();
+            if(Duels::getConfigGame()->getStatus($this->arena) !== 'conf')
+            {
+               Duels::getConfigGame()->setStatus($this->arena,'on');
+            }
         }
 
         if($this->sleep === 0)
