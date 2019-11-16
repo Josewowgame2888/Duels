@@ -41,7 +41,7 @@ class EntityManager
                 $chunk = $player->chunk;
             }
             $npc = new DuelEntity($chunk,$nbt,true);
-            $npc->setNameTag('§bDuels §7[v'.Duels::getMain()->getDescription()->getVersion().']'."\n".'§e0 Players'."\n".'§l§aCLICK TO PLAY');
+            $npc->setNameTag('§bClassic Duels §7[v'.Duels::getMain()->getDescription()->getVersion().']'."\n".'§e0 Players'."\n".'§l§aCLICK TO PLAY');
             $npc->setNameTagVisible(true);
             $npc->spawnToAll();
     }

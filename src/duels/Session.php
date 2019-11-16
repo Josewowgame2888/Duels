@@ -12,9 +12,7 @@ class Session
         {
             Duels::$session[$player->getName()] = [
                 'arena' => null,
-                'slot' => null,
-                'arrow_launched' => 0,
-                'arrow_hit_true' => 0
+                'slot' => null
             ];
         } else {
             unset(Duels::$session[$player->getName()]); 

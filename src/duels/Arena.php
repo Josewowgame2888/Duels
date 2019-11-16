@@ -1,11 +1,10 @@
 <?php
 namespace duels;
 
+use duels\utils\ZipIntegration;
 use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\entity\Entity;
-use pocketmine\level\format\generic\BaseLevelProvider;
-use pocketmine\math\Vector3;
 use pocketmine\network\protocol\AddEntityPacket;
 
 class Arena 
@@ -16,6 +15,11 @@ class Arena
         if(!file_exists(Duels::getMain()->getDataFolder().'Data'))
         {
             @mkdir(Duels::getMain()->getDataFolder().'Data');
+        }
+
+        if(!file_exists(Duels::getMain()->getDataFolder().'Backups'))
+        {
+            @mkdir(Duels::getMain()->getDataFolder().'Backups');
         }
 
         $this->loadAll();
@@ -51,19 +55,8 @@ class Arena
         if($this->getMaxArenas() > 0)
         {
         $this->reload($name);
-        if(!Duels::getMain()->getServer()->isLevelLoaded(Duels::getConfigGame()->getLevel($name)))
-        {
             $level = Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($name));
-            if($level instanceof BaseLevelProvider)
-            {
-                $name = $level->getLevelData()->getName();
-                if($name !== Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($name))->getFolderName())
-                {
-                    $level->getLevelData()->setName(Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($name)));
-                }
-            }
             Duels::getMain()->getServer()->loadLevel(Duels::getConfigGame()->getLevel($name));
-        }
         if(Duels::getConfigGame()->getStatus($name) !== 'conf')
         {
             Duels::getConfigGame()->setStatus($name,'on');
@@ -98,7 +91,12 @@ class Arena
     {
         if($this->getMaxArenas() > 0)
         {
-         if(! Duels::getConfigGame()->getStatus($name) === 'conf')
+            if(Duels::getMain()->getServer()->isLevelLoaded(Duels::getConfigGame()->getLevel($name)))
+            {
+                Duels::getMain()->getServer()->unloadLevel(Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($name)),true);
+            }
+            ZipIntegration::unzip(Duels::getMain()->getDataFolder().'Backups/',Duels::getMain()->getServer()->getDataPath().'worlds/',Duels::getConfigGame()->getLevel($name));
+         if(!Duels::getConfigGame()->getStatus($name) === 'conf')
          {
             Duels::getConfigGame()->setStatus($name,'on');
          }
@@ -210,6 +208,10 @@ class Arena
 
     public function join(Player $player, string $name): void
     {
+        if(!Duels::getMain()->getServer()->isLevelLoaded(Duels::getConfigGame()->getLevel($name)))//Hack
+        {
+          Duels::getMain()->getServer()->loadLevel(Duels::getConfigGame()->getLevel($name));  
+        }
         Session::_init($player);
         Session::setArenaPlayer($player,$name);
            if($this->getALivePlayersinArena($name) === 0)
@@ -233,7 +235,7 @@ class Arena
         $player->setFoodEnabled(false);
         $player->getInventory()->setItem(8,Item::get(331)->setCustomName('§l§eQuit Match'));
         $player->teleport(Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($name))->getSafeSpawn());
-        $player->teleport(Duels::getConfigGame()->getPos($name,1));
+        $player->teleport(Duels::getConfigGame()->getLobby($name));
         $player->sendMessage('§6You have connected to §b'.$name.'/db-'.(mt_rand(10,2000) + 300 * 23));
     }
 

@@ -13,12 +13,5 @@ class EntityTask extends Task
         {
             EntityManager::add();
         }
-        foreach(Duels::getMain()->getServer()->getDefaultLevel()->getEntities() as $entity)
-        {
-            if($entity instanceof DuelEntity)
-            {
-                $entity->setNameTag('§bDuels §7[v'.Duels::getMain()->getDescription()->getVersion().']'."\n".'§e'.Duels::getArena()->getPlaying().' Players'."\n".'§l§aCLICK TO PLAY');
-            }
-        }
     }
 }

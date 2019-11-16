@@ -2,13 +2,11 @@
 namespace duels\events;
 
 use duels\Duels;
-use pocketmine\block\Block;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockPlaceEvent;
+use duels\Session;
+use pocketmine\event\block\{BlockPlaceEvent,BlockBreakEvent};
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerDropItemEvent;
-use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\{PlayerDropItemEvent,PlayerInteractEvent,PlayerQuitEvent};
 use pocketmine\Player;
 
 class ArenaEvent implements Listener
@@ -122,7 +120,7 @@ class ArenaEvent implements Listener
             if ($files !== '..' && $files !== '.') 
             {
                $name = str_replace('.conf', '', $files);
-               if($palyer->getLevel()->getFolderName() === Duels::getConfigGame()->getLevel($name))
+               if($player->getLevel()->getFolderName() === Duels::getConfigGame()->getLevel($name))
                {
                    if($event->getCause() === EntityDamageEvent::CAUSE_SUFFOCATION || $event->getCause() === EntityDamageEvent::CAUSE_FALL)
                    {
@@ -133,6 +131,30 @@ class ArenaEvent implements Listener
         }
 
     }
+
+    public function onQuit(PlayerQuitEvent $event): void
+    {
+        $player = $event->getPlayer();
+        if (empty(Duels::getMain()->getDataFolder().'Data/')) 
+        {
+             return;
+        } 
+        $scan = scandir(Duels::getMain()->getDataFolder().'Data/');
+        foreach ($scan as $files) 
+         {
+            if ($files !== '..' && $files !== '.') 
+            {
+               $name = str_replace('.conf', '', $files);
+               if($player->getLevel()->getFolderName() === Duels::getConfigGame()->getLevel($name))
+               {
+                   Session::delete($player);
+               }
+            }
+        }
+
+    }
+
+
 
     public function deny(Player $player): void
     {

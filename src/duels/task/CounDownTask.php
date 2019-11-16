@@ -4,8 +4,8 @@ namespace duels\task;
 use duels\Duels;
 use duels\Session;
 use duels\utils\BinarySeralize;
+use duels\utils\BlockDespawn;
 use pocketmine\scheduler\Task;
-use pocketmine\item\Item;
 use pocketmine\entity\Entity;
 
 class CounDownTask extends Task
@@ -25,8 +25,10 @@ class CounDownTask extends Task
         {
             if($this->couldDown === 6)
             {
+                new BlockDespawn(Duels::getConfigGame()->getPosLobby($this->arena,1),Duels::getConfigGame()->getPosLobby($this->arena,2),$level);
                 foreach($level->getPlayers() as $player)
                 {
+                    $player->getInventory()->clearAll();
                     if(Session::getSlot($player) === 1 || Session::getSlot($player) === 2)
                     {
                         if(Session::getSlot($player) === 1)
@@ -68,15 +70,25 @@ class CounDownTask extends Task
             }
 
         } else {
+            $level->setTime(76000);
+            $level->stopTime();
             foreach($level->getPlayers() as $player)
             {
-                $player->setDataFlag(Entity::DATA_FLAGS, Entity::DATA_FLAG_NO_AI, false);
-                $player->getInventory()->clearAll();
-                $player->setHealth(20);
-                $player->setFoodEnabled(false);
-                $player->getInventory()->setItem(8,Item::get(331)->setCustomName('§l§eQuit Match'));
+                Duels::getMain()->getServer()->getScheduler()->scheduleRepeatingTask(new SongTask($player),5);
+                         $nulo = " ";
+                         $player->setNameTag($player->getName());
+                        $player->sendMessage('§a============================');
+                        if($player->getGamemode() === 0 || $player->getGamemode() === 2)
+                        {
+                           $player->sendMessage(str_repeat($nulo,15).'§eWin §7- §b+2XP');
+                        } else {
+                           $player->sendMessage(str_repeat($nulo,11).'§eParticipation §7- §b+1XP');
+                        }
+                           $player->sendMessage(str_repeat($nulo,9).'§eTime §7[§d'.'0'.'§7] - §b+1XP');
+                        $player->sendMessage('§a============================');
+                Duels::getArena()->quit($player);
             }
-            Duels::getConfigGame()->setStatus($this->arena,'on');
+            Duels::getArena()->load($this->arena);
             Duels::getMain()->getServer()->getScheduler()->cancelTask($this->getTaskId());
         }
     }

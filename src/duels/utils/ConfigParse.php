@@ -14,7 +14,10 @@ class ConfigParse
             'level' => $level,
             'pos1' => 0,
             'pos2' => 0,
-            'status' => 'conf',
+            'lobby' => 0,
+            'lobbyPos1' => 0,
+            'lobbyPos2' => 0,
+            'status' => 'conf'
         ]);
         $data->save();
         if(!Duels::getMain()->getServer()->isLevelLoaded($level))
@@ -43,7 +46,44 @@ class ConfigParse
                 $data->save();
             break;
         }
-        
+    }
+
+    public function setPosLobby(Player $player, string $name, int $pos): void
+    {
+        $data = new Config(Duels::getMain()->getDataFolder().'Data/'.$name.'.conf',Config::YAML);
+        $position = [
+            round($player->x,2,PHP_ROUND_HALF_UP),
+            round($player->y,0,PHP_ROUND_HALF_UP),
+            round($player->z,2,PHP_ROUND_HALF_UP)
+        ];
+        switch($pos)
+        {
+            case 1:
+                $data->set('lobbyPos1',$position);
+                $data->save();
+            break;
+            case 2:
+                $data->set('lobbyPos2',$position);
+                $data->save();
+            break;
+        }
+    }
+
+    public function setLobby(Player $player, string $name): void
+    {
+        $data = new Config(Duels::getMain()->getDataFolder().'Data/'.$name.'.conf',Config::YAML); 
+        $position = [
+            round($player->x,2,PHP_ROUND_HALF_UP),
+            round($player->y,0,PHP_ROUND_HALF_UP),
+            round($player->z,2,PHP_ROUND_HALF_UP)
+        ];
+        $data->set('lobby',$position);
+        $data->save(); 
+    }
+
+    public function save(string $name): void
+    {
+        ZipIntegration::zip(Duels::getMain()->getServer()->getDataPath().'worlds/'.$this->getLevel($name), Duels::getMain()->getDataFolder().'Backups/',$this->getLevel($name));
     }
 
     public function setStatus(string $name, string $status): void
@@ -81,5 +121,29 @@ class ConfigParse
             break;
         }
         return new Vector3(0,0,0);
+    }
+
+    public function getPosLobby(string $name, int $position): Vector3
+    {
+        $data = new Config(Duels::getMain()->getDataFolder().'Data/'.$name.'.conf',Config::YAML);
+        switch($position)
+        {
+            case 1:
+                $pos = $data->get('lobbyPos1');
+                return new Vector3($pos[0],$pos[1]+1,$pos[2]);
+            break;
+            case 2:
+                $pos = $data->get('lobbyPos2');
+                return new Vector3($pos[0],$pos[1]+1,$pos[2]);
+            break;
+        }
+        return new Vector3(0,0,0);
+    }
+
+    public function getLobby(string $name): vector3
+    {
+        $data = new Config(Duels::getMain()->getDataFolder().'Data/'.$name.'.conf',Config::YAML);
+        $pos = $data->get('lobby');
+        return new Vector3($pos[0],$pos[1],$pos[2]);    
     }
 }

@@ -26,7 +26,7 @@ class CreatorCommand extends PluginCommand
             {
                 if(isset($args[0]))
                 {
-                    if($args[0] === 'create' || $args[0] === 'pos' || $args[0] === 'save' || $args[0] === 'tp')
+                    if($args[0] === 'create' || $args[0] === 'pos' || $args[0] === 'save' || $args[0] === 'tp' || $args[0] === 'lobby' || $args[0] === 'lobbypos')
                     {
                         switch($args[0])
                         {
@@ -36,7 +36,7 @@ class CreatorCommand extends PluginCommand
                                     if(!Duels::getArena()->getExists($args[1]))
                                     {
                                         Duels::getConfigGame()->create($sender,$args[1],$args[2]);
-                                        $sender->sendMessage('§6The game has been created, use §b/ duels pos [1/2] '.$args[1].' §6to select the spawns');
+                                        $sender->sendMessage('§6The game has been created, use §b/duels pos [1/2] '.$args[1].' §6to select the spawns');
                                         Console::info('A new game was created: '.$args[1]);
                                     } else {
                                         $sender->sendMessage('§cThe game already exists');
@@ -51,7 +51,7 @@ class CreatorCommand extends PluginCommand
                                     if(Duels::getArena()->getExists($args[2]))
                                     {
                                         Duels::getConfigGame()->setPos($sender,$args[2], (int) $args[1]);
-                                        $sender->sendMessage('§6Selected position §7(§b'.$args[1].'§7),§6 be sure to select both after use §b/duels save '.$args[2]);
+                                        $sender->sendMessage('§6Selected position §7(§b'.$args[1].'§7),§6 be sure to select both after use §b/duels lobby '.$args[2]);
                                     } else {
                                         $sender->sendMessage('§cThe game not exists');
                                     }
@@ -59,12 +59,41 @@ class CreatorCommand extends PluginCommand
                                     $sender->sendMessage('§7use: /duels pos [1/2] [name]');
                                 }
                             break;
+                            case 'lobby'://duels lobby [name]
+                                if(isset($args[1]))
+                                {
+                                    if(Duels::getArena()->getExists($args[1]))
+                                    {
+                                        Duels::getConfigGame()->setLobby($sender,$args[1]);
+                                        $sender->sendMessage('§6The lobby has been selected, use §b/duels lobbypos [1/2] '.$args[1]);
+                                    } else {
+                                        $sender->sendMessage('§cThe game not exists');
+                                    }
+                                } else {
+                                    $sender->sendMessage('§7use: /duels lobby [name]');  
+                                }
+                            break;
+                            case 'lobbypos'://duels lobbypos [1/2] [name]
+                                if(isset($args[1],$args[2]))
+                                {
+                                    if(Duels::getArena()->getExists($args[2]))
+                                    {
+                                        Duels::getConfigGame()->setPosLobby($sender,$args[2], (int) $args[1]);
+                                        $sender->sendMessage('§6Selected Lobby position §7(§b'.$args[1].'§7),§6 be sure to select both after use §b/duels save '.$args[2]);
+                                    } else {
+                                        $sender->sendMessage('§cThe game not exists');
+                                    }
+                                } else {
+                                    $sender->sendMessage('§7use: /duels lobbypos [1/2] [name]');
+                                }
+                             break;
                             case 'save'://duels save [name]
                                 if(isset($args[1]))
                                 {
                                     if(Duels::getArena()->getExists($args[1]))
                                     {
                                             $sender->sendMessage('§l§aThe game has been created correctly.');
+                                            Duels::getConfigGame()->save($args[1]);
                                             Duels::getConfigGame()->setStatus($args[1],'on');
                                             $sender->teleport(Duels::getMain()->getServer()->getDefaultLevel()->getSafeSpawn());
                                     } else {
