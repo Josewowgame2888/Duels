@@ -25,7 +25,6 @@ class CounDownTask extends Task
         {
             if($this->couldDown === 6)
             {
-                new BlockDespawn(Duels::getConfigGame()->getPosLobby($this->arena,1),Duels::getConfigGame()->getPosLobby($this->arena,2),$level);
                 foreach($level->getPlayers() as $player)
                 {
                     $player->getInventory()->clearAll();
@@ -47,6 +46,11 @@ class CounDownTask extends Task
                     }
                     
                 } 
+            }
+            if($this->couldDown === 5)
+            {
+                $block = new BlockDespawn(Duels::getConfigGame()->getPosLobby($this->arena,2),Duels::getConfigGame()->getPosLobby($this->arena,1),$level);
+                $block->remove();
             }
 
             if($this->couldDown > 0)
@@ -88,7 +92,7 @@ class CounDownTask extends Task
                         $player->sendMessage('§a============================');
                 Duels::getArena()->quit($player);
             }
-            Duels::getArena()->load($this->arena);
+            Duels::getMain()->getServer()->getScheduler()->scheduleRepeatingTask(new ResetMapTask($this->arena),10);
             Duels::getMain()->getServer()->getScheduler()->cancelTask($this->getTaskId());
         }
     }

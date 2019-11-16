@@ -2,11 +2,9 @@
 namespace duels\task;
 
 use duels\Duels;
-use duels\Session;
 use duels\utils\BinarySeralize;
 use duels\utils\GameMode;
 use pocketmine\entity\Entity;
-use pocketmine\level\sound\AnvilFallSound;
 use pocketmine\level\sound\BlazeShootSound;
 use pocketmine\math\Vector3;
 use pocketmine\scheduler\Task;
@@ -101,9 +99,10 @@ class MatchTask extends Task
                      //reset todo
                      foreach ($level->getPlayers() as $player) 
                      {
+                        //reset
+                         Duels::getMain()->getServer()->getScheduler()->scheduleRepeatingTask(new ResetMapTask($this->arena),10);
                          Duels::getArena()->quit($player);
                      }
-                     Duels::getArena()->load($this->arena);
                      Duels::getMain()->getServer()->getScheduler()->cancelTask($this->getTaskId());
                  }  
                 }

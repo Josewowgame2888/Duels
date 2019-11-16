@@ -54,7 +54,7 @@ class Arena
     {
         if($this->getMaxArenas() > 0)
         {
-        $this->reload($name);
+           $this->reload($name);
             $level = Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($name));
             Duels::getMain()->getServer()->loadLevel(Duels::getConfigGame()->getLevel($name));
         if(Duels::getConfigGame()->getStatus($name) !== 'conf')
@@ -96,10 +96,6 @@ class Arena
                 Duels::getMain()->getServer()->unloadLevel(Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($name)),true);
             }
             ZipIntegration::unzip(Duels::getMain()->getDataFolder().'Backups/',Duels::getMain()->getServer()->getDataPath().'worlds/',Duels::getConfigGame()->getLevel($name));
-         if(!Duels::getConfigGame()->getStatus($name) === 'conf')
-         {
-            Duels::getConfigGame()->setStatus($name,'on');
-         }
         }
     }
 
@@ -208,10 +204,6 @@ class Arena
 
     public function join(Player $player, string $name): void
     {
-        if(!Duels::getMain()->getServer()->isLevelLoaded(Duels::getConfigGame()->getLevel($name)))//Hack
-        {
-          Duels::getMain()->getServer()->loadLevel(Duels::getConfigGame()->getLevel($name));  
-        }
         Session::_init($player);
         Session::setArenaPlayer($player,$name);
            if($this->getALivePlayersinArena($name) === 0)

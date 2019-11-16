@@ -130,14 +130,13 @@ class ConfigParse
         {
             case 1:
                 $pos = $data->get('lobbyPos1');
-                return new Vector3($pos[0],$pos[1]+1,$pos[2]);
+                return new Vector3($pos[0],$pos[1],$pos[2]);
             break;
             case 2:
                 $pos = $data->get('lobbyPos2');
-                return new Vector3($pos[0],$pos[1]+1,$pos[2]);
+                return new Vector3($pos[0],$pos[1],$pos[2]);
             break;
         }
-        return new Vector3(0,0,0);
     }
 
     public function getLobby(string $name): vector3

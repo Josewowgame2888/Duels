@@ -36,11 +36,9 @@ class EntityManager
         $nbt->Skin = new Compound("Skin", array(
             "Data" => new StringTag("Data", BinarySeralize::_getSkinToByte()), 
             "Name" => new StringTag("Name", 'DuelsEntity')));
-            foreach(Duels::getMain()->getServer()->getDefaultLevel()->getPlayers() as $player)
-            {
-                $chunk = $player->chunk;
-            }
-            $npc = new DuelEntity($chunk,$nbt,true);
+            $x = Duels::getMain()->getServer()->getDefaultLevel()->getSpawnLocation()->x;
+            $z = Duels::getMain()->getServer()->getDefaultLevel()->getSpawnLocation()->z;
+            $npc = new DuelEntity(Duels::getMain()->getServer()->getDefaultLevel()->getChunk($x >> 4,$z >> 4),$nbt,true);
             $npc->setNameTag('§bClassic Duels §7[v'.Duels::getMain()->getDescription()->getVersion().']'."\n".'§e0 Players'."\n".'§l§aCLICK TO PLAY');
             $npc->setNameTagVisible(true);
             $npc->spawnToAll();
