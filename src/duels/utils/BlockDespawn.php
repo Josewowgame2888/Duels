@@ -52,7 +52,6 @@ class BlockDespawn
         if(!$this->isAir($x,$y,$z))
         {
             $this->level->setBlock(new Vector3($x,$y,$z), Block::get(Block::AIR));
-            Duels::getMain()->getServer()->getLogger('BlockDespawn in '.$x.' '.$y.' '.$z);
         }
     }
 }
