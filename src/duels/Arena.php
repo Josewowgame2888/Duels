@@ -182,7 +182,7 @@ class Arena
            if ($files !== '..' && $files !== '.') 
            {
               $name = str_replace('.conf', '', $files);
-              if(Duels::getConfigGame()->getStatus($name) === 'on' && $this->getPlayersinArena($name) < 2)
+              if(Duels::getConfigGame()->getStatus($name) === 'on' && $this->getPlayersinArena($name) < 2 && Duels::getMain()->getServer()->isLevelLoaded(Duels::getConfigGame()->getLevel($name)))
               {
                   $games[$name] = $this->getPlayersinArena($name);
               }
