@@ -6,7 +6,7 @@ use pocketmine\item\Item;
 
 class GameMode 
 {
-    public const GAME_MODE_BUILDUHC = 0;
+    public const GAME_MODE_CLASSIC = 0;
     public const GAME_MODE_POTIONS = 1;
     public const GAME_MODE_SOUP = 2;
 
@@ -63,7 +63,7 @@ class GameMode
     {
         switch($mode)
         {
-            case self::GAME_MODE_BUILDUHC:
+            case self::GAME_MODE_CLASSIC:
                 self::getBuildUhc($player);
             break;
             case self::GAME_MODE_POTIONS:
@@ -79,7 +79,7 @@ class GameMode
     {
         switch($mode)
         {
-            case self::GAME_MODE_BUILDUHC:
+            case self::GAME_MODE_CLASSIC:
                 return 'Classic Mode';
             break;
             case self::GAME_MODE_POTIONS:
