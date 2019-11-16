@@ -22,6 +22,7 @@ class GameMode
         $player->getInventory()->setItem(1,Item::get(Item::GOLDEN_APPLE,0,10)->setCustomName('10'));
         $player->getInventory()->setItem(2,Item::get(Item::BOW,0,1));
         $player->getInventory()->setItem(9,Item::get(Item::ARROW,0,64));
+        $player->getInventory()->setItem(3,Item::get(Item::FISHING_ROD,0,64));
         $player->setMaxHealth(40);
         $player->setHealth(40);
         $player->setFood(20);
