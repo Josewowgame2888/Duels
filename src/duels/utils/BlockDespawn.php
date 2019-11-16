@@ -4,6 +4,7 @@ namespace duels\utils;
 use pocketmine\block\Block;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
+use duels\Duels;
 class BlockDespawn 
 {
     private $level;
@@ -15,13 +16,19 @@ class BlockDespawn
         $this->level = $level;
         $this->pos1 = $pos1;
         $this->pos2 = $pos2;
+    }
 
+    public function remove(): void
+    {
         $xMin = min($this->pos1->x,$this->pos2->x);
-        $xMax = max($this->pos1->x,$this->pos1->x);
+        $xMax = max($this->pos1->x,$this->pos2->x);
+
         $zMin = min($this->pos1->z,$this->pos2->z);
-        $zMax = max($this->pos1->z,$this->pos1->z);
-        $yMin = min($this->pos1->x,$this->pos2->x);
-        $yMax = max($this->pos1->x,$this->pos1->x);
+        $zMax = max($this->pos1->z,$this->pos2->z);
+
+        $yMin = min($this->pos1->y,$this->pos2->y);
+        $yMax = max($this->pos1->y,$this->pos2->y);
+        
         for ($x = $xMin; $x < $xMax; ++$x) {
             for ($y = $yMin; $y < $yMax; ++$y) {
                 for ($z = $zMin; $z < $zMax; ++$z) {
@@ -44,7 +51,8 @@ class BlockDespawn
     {
         if(!$this->isAir($x,$y,$z))
         {
-            $this->level->setBlockIdAt($x,$y,$z, 0);
+            $this->level->setBlock(new Vector3($x,$y,$z), Block::get(Block::AIR));
+            Duels::getMain()->getServer()->getLogger('BlockDespawn in '.$x.' '.$y.' '.$z);
         }
     }
 }
