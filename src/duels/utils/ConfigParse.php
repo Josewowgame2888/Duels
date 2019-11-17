@@ -17,7 +17,8 @@ class ConfigParse
             'lobby' => 0,
             'lobbyPos1' => 0,
             'lobbyPos2' => 0,
-            'status' => 'conf'
+            'status' => 'conf',
+            'ID' => Duels::getArena()->getMaxArenas() + (12 + mt_rand(90,200))
         ]);
         $data->save();
         if(!Duels::getMain()->getServer()->isLevelLoaded($level))
@@ -144,5 +145,11 @@ class ConfigParse
         $data = new Config(Duels::getMain()->getDataFolder().'Data/'.$name.'.conf',Config::YAML);
         $pos = $data->get('lobby');
         return new Vector3($pos[0],$pos[1],$pos[2]);    
+    }
+
+    public function getID(string $name): int
+    {
+        $data = new Config(Duels::getMain()->getDataFolder().'Data/'.$name.'.conf',Config::YAML);
+        return $data->get('ID'); 
     }
 }
