@@ -7,7 +7,7 @@ use duels\utils\Form;
 use pocketmine\event\block\{BlockPlaceEvent,BlockBreakEvent};
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\{PlayerDropItemEvent,PlayerInteractEvent,PlayerQuitEvent};
+use pocketmine\event\player\{PlayerCommandPreprocessEvent, PlayerDropItemEvent,PlayerInteractEvent,PlayerQuitEvent};
 use pocketmine\item\Item;
 use pocketmine\Player;
 
@@ -179,7 +179,38 @@ class ArenaEvent implements Listener
 
     }
 
+    public function onPlayerCommand(PlayerCommandPreprocessEvent $event): void
+    {
+        $player = $event->getPlayer();
+        $message = strtolower($event->getMessage());
+        if (empty(Duels::getMain()->getDataFolder().'Data/')) 
+        {
+             return;
+        }
+        $scan = scandir(Duels::getMain()->getDataFolder().'Data/');
+        foreach ($scan as $files) 
+         {
+            if ($files !== '..' && $files !== '.') 
+            {
+               $name = str_replace('.conf', '', $files);
+               if($player->getLevel()->getFolderName() === Duels::getConfigGame()->getLevel($name))
+               {
+                if(strpos($message, '/') === 0)
+                {
+                    $command = explode(' ', $message)[0];
+                    if(in_array($command, ['/gamemode', '/give', '/tp','/lobby','/spawn','/hub','/home','/kill','/ban','/kick','/ban-ip','/pardon','/pardon-ip','/help','/version','/transfer','/op','/deop'],true))
+                    {
+                        $this->deny($player);
+                        $event->setCancelled(true);
+                        $player->sendMessage('§7You cannot execute these commands in play.');
+                    }
+                }
+                unset($command);
+               }
+            }
+        } 
 
+    }
 
     public function deny(Player $player): void
     {
