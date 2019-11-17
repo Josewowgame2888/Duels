@@ -1,4 +1,4 @@
-name: Duels
+name: ClassicDuels
 main: duels\Duels
 author: Josewowgame
 api: 1.12.0
