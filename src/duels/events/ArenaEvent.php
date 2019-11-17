@@ -3,10 +3,12 @@ namespace duels\events;
 
 use duels\Duels;
 use duels\Session;
+use duels\utils\Form;
 use pocketmine\event\block\{BlockPlaceEvent,BlockBreakEvent};
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\{PlayerDropItemEvent,PlayerInteractEvent,PlayerQuitEvent};
+use pocketmine\item\Item;
 use pocketmine\Player;
 
 class ArenaEvent implements Listener
@@ -72,9 +74,31 @@ class ArenaEvent implements Listener
                {
                 if(Duels::getConfigGame()->getStatus($name) === 'on')
                 {
-                    if($event->getItem()->getId() === 331 && $event->getItem()->getCustomName() === '§l§eQuit Match')
+                    if($event->getItem()->getId() === Item::REDSTONE && $event->getItem()->getCustomName() === '§l§eQuit Match')
                     {
                         Duels::getArena()->quit($event->getPlayer());
+                    }
+                    if($event->getItem()->getId() === Item::BOOK && $event->getItem()->getCustomName() === '§l§eGeneral')
+                    {
+                        $function = function()
+                        {
+                        };
+                        $version = Duels::getMain()->getDescription()->getVersion();
+                        if(strlen($version) <= 1)
+                        {
+                            $version .= '.0';
+                        }
+                        $line = [
+                            'line1' => '§eClassic Duels is a modality where you will have to fight with an opponent for survival and glory. The modality has three classic pvp modes as they are (Classic Duel, Potions Duel and Soup Duel).',
+                            'line2' => '§l§fNews or Updates for §r§a[v'.$version.']',
+                            'line3' => '§5-§6 3 Classic game modes.',
+                            'line4' => '§5-§6 Instant healing with apples (+5.1) and soups (+3.5).',
+                            'line5' => '§5-§6 Life indicator on the player tag.',
+                            'line6' => '§eNOTE: If you found an error report it to the §9Discord §eserver or §bTwitter. §eOur §cdevelopers §eare always aware of the improvement so that everything works normally inside and outside the server.',
+                            'br' => "\n"
+                        ];
+                        $form = Form::createGUI($function,'§l§cGeneral information',$line['line1'].$line['br'].$line['line2'].$line['br'].$line['line3'].$line['br'].$line['line4'].$line['br'].$line['line5'].$line['br'].$line['line6']);
+                        $form->sendForm($event->getPlayer());
                     }
                 }  
                }

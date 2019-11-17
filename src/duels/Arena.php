@@ -12,6 +12,7 @@ class Arena
 
     public function init(): void
     {
+        @mkdir(Duels::getMain()->getDataFolder());
         if(!file_exists(Duels::getMain()->getDataFolder().'Data'))
         {
             @mkdir(Duels::getMain()->getDataFolder().'Data');
