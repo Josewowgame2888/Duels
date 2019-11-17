@@ -94,10 +94,11 @@ class ArenaEvent implements Listener
                             'line3' => '§5-§6 3 Classic game modes.',
                             'line4' => '§5-§6 Instant healing with apples (+5.1) and soups (+3.5).',
                             'line5' => '§5-§6 Life indicator on the player tag.',
-                            'line6' => '§eNOTE: If you found an error report it to the §9Discord §eserver or §bTwitter. §eOur §cdevelopers §eare always aware of the improvement so that everything works normally inside and outside the server.',
-                            'br' => "\n"
+                            'line6' => '§dNOTE:§e If you found an error report it to the §9Discord §eserver or §bTwitter. §eOur §cDevelopers §eare always aware of the improvement so that everything works normally inside and outside the server.',
+                            'br' => "\n",
+                            'br2' => "\n"."\n"
                         ];
-                        $form = Form::createGUI($function,'§l§cGeneral information',$line['line1'].$line['br'].$line['line2'].$line['br'].$line['line3'].$line['br'].$line['line4'].$line['br'].$line['line5'].$line['br'].$line['line6']);
+                        $form = Form::createGUI($function,'§l§cGeneral information',$line['line1'].$line['br2'].$line['line2'].$line['br1'].$line['line3'].$line['br'].$line['line4'].$line['br'].$line['line5'].$line['br2'].$line['line6']);
                         $form->sendForm($event->getPlayer());
                     }
                 }  
