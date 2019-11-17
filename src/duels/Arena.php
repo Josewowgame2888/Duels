@@ -225,10 +225,11 @@ class Arena
         $player->getInventory()->clearAll();
         $player->setHealth(20);
         $player->setFoodEnabled(false);
-        $player->getInventory()->setItem(8,Item::get(331)->setCustomName('§l§eQuit Match'));
+        $player->getInventory()->setItem(8,Item::get(Item::REDSTONE)->setCustomName('§l§eQuit Match'));
+        $player->getInventory()->setItem(0,Item::get(Item::BOOK)->setCustomName('§l§eGeneral'));
         $player->teleport(Duels::getMain()->getServer()->getLevelByName(Duels::getConfigGame()->getLevel($name))->getSafeSpawn());
         $player->teleport(Duels::getConfigGame()->getLobby($name));
-        $player->sendMessage('§6You have connected to §b'.$name.'/db-'.(mt_rand(10,2000) + 300 * 23));
+        $player->sendMessage('§6You have connected to §b'.$name.'/section-'.(mt_rand(10,2000) + 300 * 23));
     }
 
     public function quit(Player $player): void
