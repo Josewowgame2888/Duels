@@ -29,7 +29,8 @@ class Duels extends PluginBase
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new WaitingTask(),20);
     }
 
-    public static function getMain(): Duels{
+    public static function getMain(): Duels
+    {
         return self::$load;
     }
 

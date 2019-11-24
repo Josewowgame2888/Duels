@@ -105,6 +105,10 @@ class MatchTask extends Task
                      }
                      Duels::getMain()->getServer()->getScheduler()->cancelTask($this->getTaskId());
                  }  
+                } else if(Duels::getConfigGame()->getStatus($this->arena) === 'off' && Duels::getArena()->getALivePlayersinArena($this->arena) === 0){
+                    Duels::getMain()->getServer()->getScheduler()->scheduleRepeatingTask(new ResetMapTask($this->arena),10);
+                    Duels::getArena()->quit($player); 
+                    Duels::getMain()->getServer()->getScheduler()->cancelTask($this->getTaskId());
                 }
             }
 

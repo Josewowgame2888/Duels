@@ -98,7 +98,7 @@ class ArenaEvent implements Listener
                             'br' => "\n",
                             'br2' => "\n"."\n"
                         ];
-                        $form = Form::createGUI($function,'§l§cGeneral information',$line['line1'].$line['br2'].$line['line2'].$line['br1'].$line['line3'].$line['br'].$line['line4'].$line['br'].$line['line5'].$line['br2'].$line['line6']);
+                        $form = Form::createGUI($function,'§l§cGeneral information',$line['line1'].$line['br2'].$line['line2'].$line['br'].$line['line3'].$line['br'].$line['line4'].$line['br'].$line['line5'].$line['br2'].$line['line6']);
                         $form->sendForm($event->getPlayer());
                     }
                 }  
@@ -193,19 +193,11 @@ class ArenaEvent implements Listener
             if ($files !== '..' && $files !== '.') 
             {
                $name = str_replace('.conf', '', $files);
-               if($player->getLevel()->getFolderName() === Duels::getConfigGame()->getLevel($name))
+               if($player->getLevel()->getFolderName() === Duels::getConfigGame()->getLevel($name) && Duels::getConfigGame()->getStatus($name) !== 'conf')
                {
-                if(strpos($message, '/') === 0)
-                {
-                    $command = explode(' ', $message)[0];
-                    if(in_array($command, ['/gamemode', '/give', '/tp','/lobby','/spawn','/hub','/home','/kill','/ban','/kick','/ban-ip','/pardon','/pardon-ip','/help','/version','/transfer','/op','/deop'],true))
-                    {
-                        $this->deny($player);
-                        $event->setCancelled(true);
-                        $player->sendMessage('§7You cannot execute these commands in play.');
-                    }
-                }
-                unset($command);
+                $event->setCancelled(true);
+                $this->deny($player);
+                $player->sendMessage('§7You cannot execute these commands in play.');
                }
             }
         } 
