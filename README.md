@@ -10,7 +10,7 @@ Minigame Duels [steadfast]
 - /duels tp [level]
 
 # NPC
-- Change the x-y-z-yaw coordinates src/duels/npc/EntityManager.php
+- Change the x-y-z-yaw-pitch coordinates src/duels/npc/EntityManager.php
 ```
     private static function getPosition(): array
     {
