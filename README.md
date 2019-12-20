@@ -9,3 +9,9 @@ Minigame Duels [steadfast]
 - /duels save [name]
 - /duels tp [level]
 
+# NPC
+- Change the vector3 src/duels/
+    private static function getPosition(): array
+    {
+        return [230.33,53,13.58,93,0];
+    }
