@@ -16,7 +16,10 @@ class Session
             ];
         } else {
             unset(Duels::$session[$player->getName()]); 
-            Duels::$session[$player->getName()] = [];       
+            Duels::$session[$player->getName()] = [
+                'arena' => null,
+                'slot' => null
+            ];       
         }
     }
 
@@ -28,7 +31,8 @@ class Session
         }
     }
 
-    public static function exists(Player $player): bool{
+    public static function exists(Player $player): bool
+    {
         if(isset(Duels::$session[$player->getName()]))
         {
             return true;
