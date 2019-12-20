@@ -94,7 +94,7 @@ class ArenaEvent implements Listener
                             'line3' => '§5-§6 3 Classic game modes.',
                             'line4' => '§5-§6 Instant healing with apples (+5.1) and soups (+3.5).',
                             'line5' => '§5-§6 Life indicator on the player tag.',
-                            'line6' => '§dNOTE:§e If you found an error report it to the §9Discord §eserver or §bTwitter. §eOur §cDevelopers §eare always aware of the improvement so that everything works normally inside and outside the server.',
+                            'line6' => '§dNOTE:§e If you found an error report it to the §9Discord §eserver or §bTwitter. §eOur §c Owner Developer @Josewowgame §eare always aware of the improvement so that everything works normally inside and outside the server.',
                             'br' => "\n",
                             'br2' => "\n"."\n"
                         ];
