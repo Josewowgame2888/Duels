@@ -10,8 +10,8 @@ Minigame Duels [steadfast]
 - /duels tp [level]
 
 # NPC
-- Change the vector3 ```src/duels/npc/EntityManager.php```
-  ```  private static function getPosition(): array
+- Change the vector3 `src/duels/npc/EntityManager.php`
+- ```private static function getPosition(): array
     {
         return [230.33,53,13.58,93,0];
     }```
