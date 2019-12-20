@@ -18,3 +18,4 @@ Minigame Duels [steadfast]
     }
 ```
 # Get exact position for the npc
+- use: /dpos
