@@ -8,6 +8,10 @@ use duels\Duels;
 use duels\utils\BinarySeralize;
 use pocketmine\entity\Entity;
 use pocketmine\nbt\tag\{Compound,DoubleTag,Enum,FloatTag, StringTag};
+use pocketmine\utils\Config;
+
+use function number_format;
+
 class EntityManager
 {
 
@@ -16,10 +20,24 @@ class EntityManager
         Entity::registerEntity(DuelEntity::class, true);
         Duels::getMain()->getServer()->getScheduler()->scheduleRepeatingTask(new EntityTask(), 30);
         new EntityEvent();
+
+        if(!file_exists(Duels::getMain()->getDataFolder().'npc.dat')) {
+            $config = new Config(Duels::getMain()->getDataFolder().'npc.dat',Config::YAML,[
+                'location' => [
+                    number_format(Duels::getMain()->getServer()->getDefaultLevel()->getSpawnLocation()->x,2),
+                    number_format(Duels::getMain()->getServer()->getDefaultLevel()->getSpawnLocation()->y,1),
+                    number_format(Duels::getMain()->getServer()->getDefaultLevel()->getSpawnLocation()->z,2),
+                    93,
+                    0
+                ]
+            ]);
+            $config->save();
+        }
     }
 
     public static function add(): void
     {
+
         $nbt = new Compound("", [
 			"Pos" => new Enum("Pos", [
 				new DoubleTag("", self::getPosition()[0]),
@@ -63,7 +81,9 @@ class EntityManager
 
     private static function getPosition(): array
     {
-        return [230.33,53,13.58,93,0];
+        $config = new Config(Duels::getMain()->getDataFolder().'npc.dat',Config::YAML);
+        $location = (float) $config->get('location');
+        return [$location[0] ,$location[1],$location[2],$location[3],$location[4]];
     }
 }
 

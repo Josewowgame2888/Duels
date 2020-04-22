@@ -6,10 +6,13 @@ namespace duels\commands;
 
 use pocketmine\command\{PluginCommand,CommandSender};
 use duels\Duels;
+use duels\npc\EntityManager;
 use duels\utils\Console;
 use pocketmine\Player;
+use pocketmine\utils\Config;
 
 use function file_exists;
+use function number_format;
 
 class CreatorCommand extends PluginCommand
 {
@@ -32,10 +35,23 @@ class CreatorCommand extends PluginCommand
             {
                 if(isset($args[0]))
                 {
-                    if($args[0] === 'create' || $args[0] === 'pos' || $args[0] === 'save' || $args[0] === 'tp' || $args[0] === 'lobby' || $args[0] === 'lobbypos')
+                    if($args[0] === 'create' || $args[0] === 'pos' || $args[0] === 'save' || $args[0] === 'tp' || $args[0] === 'lobby' || $args[0] === 'lobbypos' || $args[0] === 'npc')
                     {
                         switch($args[0])
                         {
+                            case 'npc':
+                                $config = new Config(Duels::getMain()->getDataFolder().'npc.dat',Config::YAML);
+                                $config->set('location',[
+                                    number_format($sender->x,2),
+                                    number_format($sender->y,1),
+                                    number_format($sender->z,2),
+                                    $sender->yaw,
+                                    $sender->pitch
+                                ]);
+                                $config->save();
+                                EntityManager::add();
+                                $sender->sendMessage('NPC created!');
+                            break;
                             case 'create'://duels create [name] [level]
                                 if(isset($args[1],$args[2]))
                                 {
