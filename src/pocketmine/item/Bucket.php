@@ -24,6 +24,9 @@ namespace pocketmine\item;
 use pocketmine\block\Air;
 use pocketmine\block\Block;
 use pocketmine\block\Liquid;
+use pocketmine\block\Slab;
+use pocketmine\block\Slab2;
+use pocketmine\block\WoodSlab;
 use pocketmine\event\player\PlayerBucketFillEvent;
 use pocketmine\level\Level;
 use pocketmine\Player;
@@ -42,17 +45,27 @@ class Bucket extends Item{
 	}
 
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+		if ($block instanceof Slab || $block instanceof Slab2 || $block instanceof WoodSlab) {
+			return false;
+		}
 		$targetBlock = Block::get($this->meta);
 
 		if($targetBlock instanceof Air){
 			if($target instanceof Liquid and $target->getDamage() === 0){
 				$result = clone $this;
 				$result->setDamage($target->getId());
+				$result->setCount(1);
 				$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketFillEvent($player, $block, $face, $this, $result));
 				if(!$ev->isCancelled()){
 					$player->getLevel()->setBlock($target, new Air(), true, true);
 					if($player->isSurvival()){
-						$player->getInventory()->setItemInHand($ev->getItem(), $player);
+						if ($this->count <= 1) {
+							$player->getInventory()->setItemInHand($ev->getItem(), $player);
+						} else {
+							$this->count--;
+							$player->getInventory()->addItem($ev->getItem());
+						}
+												
 					}
 					return true;
 				}else{

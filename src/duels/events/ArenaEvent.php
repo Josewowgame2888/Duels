@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\events;
 
 use duels\Duels;
@@ -10,6 +13,11 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\{PlayerCommandPreprocessEvent, PlayerDropItemEvent,PlayerInteractEvent,PlayerQuitEvent};
 use pocketmine\item\Item;
 use pocketmine\Player;
+
+use function scandir;
+use function str_replace;
+use function strlen;
+use function strtolower;
 
 class ArenaEvent implements Listener
 {

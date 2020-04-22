@@ -1,10 +1,17 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\utils;
 
 use duels\Duels;
 use pocketmine\math\Vector3;
 use pocketmine\utils\Config;
 use pocketmine\Player;
+
+use function mt_rand;
+use function round;
+
 class ConfigParse
 {
 

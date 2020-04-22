@@ -22,18 +22,72 @@
 
 namespace pocketmine\item;
 
+use pocketmine\nbt\tag\Compound;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\item\enchantment\Enchantment;
+
 abstract class Armor extends Item{
+	
+	public function __construct($id, $meta = 0, $count = 1, $name = "Unknown", $obtainTime = null) {
+		parent::__construct($id, $meta, $count, $name, $obtainTime);
+		$this->checkDamage();
+	}
 
 	public function getMaxStackSize(){
 		return 1;
 	}
 	
 	public function removeDurability($count = 1) {
+		$ench = $this->getEnchantment(Enchantment::TYPE_UNBREAKING);
+		if (!is_null($ench)) {
+			$enchLevel = $ench->getLevel();
+			$chance = 60 + 40 / ($enchLevel + 1);
+			if (mt_rand(1, 100) > $chance) {
+				return;
+			}
+		}
 		$this->meta += $count;
+		$this->checkDamage();
 	}
 	
 	public function isArmor(){
 		return true;
+	}
+	
+	public function setDamage($meta) {
+		parent::setDamage($meta);
+		$this->checkDamage();
+	}
+
+	public function checkDamage() {
+		if ($this->meta == 0) {
+			if ($this->hasCompound()) {
+				$tag = $this->getNamedTag();
+				if (isset($tag->Damage)) {
+					unset($tag->Damage);
+					parent::setCompound($tag);
+				}
+			}
+		} else {
+			if (!$this->hasCompound()) {
+				$tag = new Compound("", []);
+			} else {
+				$tag = $this->getNamedTag();
+			}
+			$tag->Damage = new IntTag("Damage", $this->meta);
+			parent::setCompound($tag);
+		}
+	}
+	
+	public function setCompound($tags) {
+		if($tags instanceof Compound){
+			if (isset($tags['Damage'])) {
+				$this->meta = $tags['Damage'];
+			}
+		}
+		parent::setCompound($tags);
+		$this->checkDamage();
+		return $this;
 	}
 	
 	/**

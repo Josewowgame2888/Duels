@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\npc;
 
 use duels\Duels;
@@ -8,6 +11,8 @@ use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\network\protocol\MovePlayerPacket;
 use pocketmine\Player;
 use pocketmine\math\Vector2;
+
+use function atan2;
 
 class EntityEvent implements Listener
 {

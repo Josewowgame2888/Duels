@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace duels\utils;
 
 use pocketmine\Server;
@@ -12,6 +14,13 @@ use pocketmine\customUI\elements\customForm\Slider;
 use pocketmine\customUI\elements\customForm\StepSlider;
 use pocketmine\customUI\elements\customForm\Toggle;
 use pocketmine\customUI\elements\simpleForm\Button;
+
+use function is_string;
+use function is_array;
+use function is_int;
+use function is_bool;
+use function strtolower;
+use function json_encode;
 
 class Form{
 

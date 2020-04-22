@@ -1,10 +1,16 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\commands;
 
 use pocketmine\command\{PluginCommand,CommandSender};
 use duels\Duels;
 use duels\utils\Console;
 use pocketmine\Player;
+
+use function file_exists;
+
 class CreatorCommand extends PluginCommand
 {
     public function __construct(Duels $main)

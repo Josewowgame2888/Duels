@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\events;
 
 use pocketmine\event\Listener;
@@ -10,6 +13,10 @@ use pocketmine\level\particle\HeartParticle;
 use pocketmine\level\particle\LargeExplodeParticle;
 use pocketmine\level\sound\AnvilFallSound;
 use pocketmine\math\Vector3;
+
+use function scandir;
+use function str_replace;
+use function is_int;
 
 class DamageEvent implements Listener
 {

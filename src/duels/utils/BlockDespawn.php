@@ -1,10 +1,16 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\utils;
 
 use pocketmine\block\Block;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
-use duels\Duels;
+
+use function min;
+use function max;
+
 class BlockDespawn 
 {
     private $level;

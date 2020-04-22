@@ -1,9 +1,11 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\task;
 
 use duels\Duels;
 use pocketmine\scheduler\Task;
-use pocketmine\level\Level;
 use pocketmine\Player;
 
 class SongTask extends Task

@@ -1,7 +1,14 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\task;
 use pocketmine\scheduler\Task;
 use duels\Duels;
+
+use function scandir;
+use function str_replace;
+
 class WaitingTask extends Task
 {
     private $tick_devirse = 0;

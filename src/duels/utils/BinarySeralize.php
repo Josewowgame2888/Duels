@@ -1,5 +1,10 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\utils;
+
+use function str_replace;
 
 class BinarySeralize 
 {

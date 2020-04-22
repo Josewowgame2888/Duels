@@ -1,8 +1,24 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\utils;
+
 use ZipArchive;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+
+use function realpath;
+use function substr;
+use function strlen;
+use function is_dir;
+use function scandir;
+use function filetype;
+use function unlink;
+use function reset;
+use function rmdir;
+
+
 class ZipIntegration 
 {
     public static function zip(string $path, string $destination, string $name = ''): void

@@ -8,6 +8,7 @@ Minigame Duels [steadfast]
 - /duels lobbypos [1/2] [name]
 - /duels save [name]
 - /duels tp [level]
+- /duels npc
 
 # NPC
 - Change the x-y-z-yaw-pitch coordinates src/duels/npc/EntityManager.php

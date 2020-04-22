@@ -169,6 +169,7 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_FLAG_CAN_POWER_JUMP = 43;
 	const DATA_FLAG_HAS_COLLISION = 45;
 	const DATA_FLAG_AFFECTED_BY_GRAVITY = 46;
+	const DATA_FLAG_FIRE_IMMUNE = 47;
 	
 	const DATA_PLAYER_FLAG_SLEEP = 1;
 	const DATA_PLAYER_FLAG_DEAD = 2;
@@ -191,6 +192,7 @@ abstract class Entity extends Location implements Metadatable{
 	protected $dataFlags = 0;
 	protected $dataProperties = [	
 		self::DATA_FLAGS => [self::DATA_TYPE_LONG, 0],
+		self::DATA_COLOR => [self::DATA_TYPE_BYTE, 0],
 		self::DATA_AIR => [self::DATA_TYPE_SHORT, 300],
 		self::DATA_NAMETAG => [self::DATA_TYPE_STRING, ""],
 		self::DATA_LEAD_HOLDER => [self::DATA_TYPE_LONG, -1],
@@ -1152,29 +1154,22 @@ abstract class Entity extends Location implements Metadatable{
 		if($dx == 0 and $dz == 0 and $dy == 0){
 			return true;
 		}
-
-		if($this->keepMovement){
-			$this->boundingBox->offset($dx, $dy, $dz);
-			$this->setPosition(new Vector3(($this->boundingBox->minX + $this->boundingBox->maxX) / 2, $this->boundingBox->minY, ($this->boundingBox->minZ + $this->boundingBox->maxZ) / 2));
-			return true;
+		$pos = new Vector3($this->x + $dx, $this->y + $dy, $this->z + $dz);			
+		if(!$this->setPosition($pos)){
+			return false;
 		}else{
-			$pos = new Vector3($this->x + $dx, $this->y + $dy, $this->z + $dz);			
-			if(!$this->setPosition($pos)){
-				return false;
-			}else{
-				$bb = clone $this->boundingBox;
-				$bb->maxY = $bb->minY + 0.5;
-				$bb->minY -= 1;
-				if (count($this->level->getCollisionBlocks($bb)) > 0) {
-					$this->onGround = true;
-				} else {
-					$this->onGround = false;
-				}
-				$this->isCollided = $this->onGround;
-				$this->updateFallState($dy, $this->onGround);
+			$bb = clone $this->boundingBox;
+			$bb->maxY = $bb->minY + 0.5;
+			$bb->minY -= 1;
+			if (count($this->level->getCollisionBlocks($bb)) > 0) {
+				$this->onGround = true;
+			} else {
+				$this->onGround = false;
 			}
-			return true;
+			$this->isCollided = $this->onGround;
+			$this->updateFallState($dy, $this->onGround);
 		}
+		return true;
 	}
 
 

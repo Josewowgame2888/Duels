@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\task;
 
 use duels\Duels;
@@ -7,6 +10,8 @@ use duels\utils\BinarySeralize;
 use duels\utils\BlockDespawn;
 use pocketmine\scheduler\Task;
 use pocketmine\entity\Entity;
+
+use function str_repeat;
 
 class CounDownTask extends Task
 {

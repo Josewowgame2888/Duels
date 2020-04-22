@@ -1,8 +1,14 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\npc;
 
 use duels\Duels;
 use pocketmine\scheduler\Task;
+
+use function count;
+use function strlen;
 
 class EntityTask extends Task
 {

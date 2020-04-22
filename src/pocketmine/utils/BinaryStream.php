@@ -75,7 +75,9 @@ class BinaryStream {
 		} else if ($len === true) {
 			return substr($this->buffer, $this->offset);
 		}
-
+		if (strlen($this->buffer) < $this->offset + $len) {
+			throw new \Exception('binary stream get error');
+		}
 		return $len === 1 ? $this->buffer{$this->offset++} : substr($this->buffer, ($this->offset += $len) - $len, $len);
 	}
 
@@ -164,6 +166,9 @@ class BinaryStream {
 	}
 
 	public function getByte() {
+		if (strlen($this->buffer) < $this->offset + 1) {
+			throw new \Exception('binary stream getByte error');
+		}
 		return ord($this->buffer{$this->offset++});
 	}
 
@@ -212,14 +217,20 @@ class BinaryStream {
 		$count = $aux & 0xff;
 		
 		$nbtLen = $this->getLShort();		
-		$nbt = "";		
+		$nbt = "";	
 		if ($nbtLen > 0) {
 			$nbt = $this->get($nbtLen);
 		} elseif($nbtLen == -1) {
 			$nbtCount = $this->getVarInt();
+			if ($nbtCount > 100) {
+				throw new \Exception('get slot nbt error, too many count');
+			}
 			for ($i = 0; $i < $nbtCount; $i++) {
 				$nbtTag = new NBT(NBT::LITTLE_ENDIAN);
 				$offset = $this->getOffset();
+				if ($offset > strlen($this->getBuffer())) {
+					throw new \Exception('get slot nbt error');
+				}
 				$nbtTag->read(substr($this->getBuffer(), $offset), false, true);
 				$nbt = $nbtTag->getData();
 				$this->setOffset($offset + $nbtTag->getOffset());
@@ -317,7 +328,7 @@ class BinaryStream {
 		}
 		if (isset($additionalSkinData['skinGeomtryData'])) {
 			$skinGeomtryData = $additionalSkinData['skinGeomtryData'];
-		}
+		}		
 		if (empty($skinGeomtryName)) {
 			$skinGeomtryName = "geometry.humanoid.custom";
 		}
@@ -381,7 +392,13 @@ class BinaryStream {
 		
 		$this->putString(isset($additionalSkinData['CapeId']) ? $additionalSkinData['CapeId'] : '');
 		$uniqId = $skinId . $skinGeomtryName . "-" . microtime(true);
-		$this->putString($uniqId); // Full Skin ID		
+		$this->putString($uniqId); // Full Skin ID	
+		if ($playerProtocol == Info::PROTOCOL_390) { // Right now this only applies for proto 390
+			$this->putString(''); //ArmSize
+			$this->putString(''); //SkinColor
+			$this->putLInt(0);   //Persona Pieces -> more info to come
+			$this->putLInt(0);	//PieceTintColors -> more info to come
+		}	
 	}
 
 	public function getSerializedSkin($playerProtocol, &$skinId, &$skinData, &$skinGeomtryName, &$skinGeomtryData, &$capeData, &$additionalSkinData) {		
@@ -425,18 +442,49 @@ class BinaryStream {
 	}
 
 	public function checkSkinData(&$skinData, &$skinGeomtryName, &$skinGeomtryData, &$additionalSkinData) {
+		if (empty($skinGeomtryName) && !empty($additionalSkinData['SkinResourcePatch'])) {
+			if (($jsonSkinResourcePatch = @json_decode($additionalSkinData['SkinResourcePatch'], true)) && isset($jsonSkinResourcePatch['geometry']['default'])) {
+				$skinGeomtryName = $jsonSkinResourcePatch['geometry']['default'];
+			}
+		} 
+		if (!empty($skinGeomtryName) && stripos($skinGeomtryName, 'geometry.') !== 0) {
+			if (!empty($skinGeomtryData) && ($jsonSkinData = @json_decode($skinGeomtryData, true))) {
+				foreach ($jsonSkinData as $key => $value) {
+					if ($key == $skinGeomtryName) {
+						unset($jsonSkinData[$key]);
+						$jsonSkinData['geometry.' . $key] = $value;
+						$skinGeomtryName = 'geometry.' . $key;
+						$skinGeomtryData = json_encode($jsonSkinData);
+						if (!empty($additionalSkinData['SkinResourcePatch']) && ($jsonSkinResourcePatch = @json_decode($additionalSkinData['SkinResourcePatch'], true)) && !empty($jsonSkinResourcePatch['geometry'])) {
+							foreach ($jsonSkinResourcePatch['geometry'] as &$geometryName) {
+								if ($geometryName == $key) {
+									$geometryName = $skinGeomtryName;
+									$additionalSkinData['SkinResourcePatch'] = json_encode($jsonSkinResourcePatch);
+									break;
+								}
+							}
+						}						
+						break;
+					}
+				}
+			}
+		}
 		if (isset($additionalSkinData['PersonaSkin']) && $additionalSkinData['PersonaSkin']) {
 			static $defaultSkins = [];
 			if (empty($defaultSkins)) {
-				$defaultSkins[] = file_get_contents(__DIR__ . "/defaultSkins/Alex.dat");
-				$defaultSkins[] = file_get_contents(__DIR__ . "/defaultSkins/Steve.dat");
+				$defaultSkins[] = [file_get_contents(__DIR__ . "/defaultSkins/Alex.dat"), 'geometry.humanoid.customSlim'];
+				$defaultSkins[] = [file_get_contents(__DIR__ . "/defaultSkins/Steve.dat"), 'geometry.humanoid.custom'];
 			}
 			$additionalSkinData['skinData'] = $skinData;
 			$additionalSkinData['skinGeomtryName'] = $skinGeomtryName;
 			$additionalSkinData['skinGeomtryData'] = $skinGeomtryData;
-			$skinData = $defaultSkins[array_rand($defaultSkins)];
+			$randomSkinData =  $defaultSkins[array_rand($defaultSkins)];
+			$skinData = $randomSkinData[0];
 			$skinGeomtryData = '';
-			$skinGeomtryName = '';
+			$skinGeomtryName = $randomSkinData[1];
+		} elseif (in_array($skinGeomtryName, ['geometry.humanoid.customSlim', 'geometry.humanoid.custom'])) {
+			$skinGeomtryData = '';
+			$additionalSkinData = [];
 		}
 	}
 	

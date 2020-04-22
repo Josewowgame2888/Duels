@@ -185,7 +185,7 @@ class Level implements ChunkManager, Metadatable{
 	private $temporalVector;
 
 	/** @var \SplFixedArray */
-	private $blockStates;
+	protected $blockStates;
 	protected $playerHandItemQueue = array();
 	
 	private $chunkGenerationQueue = [];
@@ -1205,7 +1205,7 @@ class Level implements ChunkManager, Metadatable{
 				}
 			}
 			
-			$breakTime = $player->isCreative() ? 0.15 : $target->getBreakTime($item);
+			$breakTime = $player->isCreative() ? 0.15 : $player->getBreakTime($target, $item);
 			if (!$ev->getInstaBreak() && ($player->lastBreak + $breakTime) >= microtime(true)) {
 				return false;
 			}
@@ -1308,8 +1308,8 @@ class Level implements ChunkManager, Metadatable{
 				if ($item->canBeActivated() && $item->onActivate($this, $player, $block, $target, $face, $fx, $fy, $fz)) {
 					if ($item->getCount() <= 0) {
 						$item = Item::get(Item::AIR, 0, 0);
-						return true;
 					}
+					return true;
 				}
 			} else {
 				return false;
@@ -1328,7 +1328,7 @@ class Level implements ChunkManager, Metadatable{
 			return false;
 		}
 
-		if (!($block->canBeReplaced() === true || ($hand->getId() === Item::SLAB && $block->getId() === Item::SLAB))) {
+		if (!($block->canBeReplaced() === true || ($hand->getId() === $block->getId() && ($block->getId() === Item::SLAB || $block->getId() === Item::STONE_SLAB2)))) {
 			return false;
 		}
 
@@ -1349,10 +1349,18 @@ class Level implements ChunkManager, Metadatable{
 					continue;
 				}
 				if ($e === $player) {
-					$dy = $player->getY() - $hand->getY();
-					if ($dy > 0.75 || $dy < - 1.5) {
-						continue;
-					}
+					if ($player->onGround) {
+						$dy = $player->getY() - $hand->getY();
+						if ($dy > 0.75 || $dy < - 1.5) {
+							continue;
+						}
+					} else {
+						$bb = clone $hand->getBoundingBox();
+						$bb->contract(0.2, 0.25, 0.2);
+						if (!$e->boundingBox->intersectsWith($bb)) {
+							continue;
+						}	
+					}								
 				}
 				++$realCount;
 			}
@@ -1567,7 +1575,7 @@ class Level implements ChunkManager, Metadatable{
 	 * @return int 0-255
 	 */
 	public function getBlockIdAt($x, $y, $z){
-		return $this->getChunk($x >> 4, $z >> 4, true)->getBlockId($x & 0x0f, $y & $this->getYMask(), $z & 0x0f);
+		return $y > $this->getYMask() ? 0 : $this->getChunk($x >> 4, $z >> 4, true)->getBlockId($x & 0x0f, $y & $this->getYMask(), $z & 0x0f);
 	}
 
 	/**
@@ -1593,7 +1601,7 @@ class Level implements ChunkManager, Metadatable{
 	 * @return int 0-15
 	 */
 	public function getBlockDataAt($x, $y, $z){
-		return $this->getChunk($x >> 4, $z >> 4, true)->getBlockData($x & 0x0f, $y & $this->getYMask(), $z & 0x0f);
+		return $y > $this->getYMask() ? 0 : $this->getChunk($x >> 4, $z >> 4, true)->getBlockData($x & 0x0f, $y & $this->getYMask(), $z & 0x0f);
 	}
 
 	/**
@@ -2411,5 +2419,16 @@ class Level implements ChunkManager, Metadatable{
 	
 	public function getUpdateQueue() {
 		return $this->updateQueue;
+	}
+	
+	public function isClosed() {
+		return $this->closed;
+	}
+
+	public function isNight(){
+		if($this->time >= Level::TIME_NIGHT and $this->time < Level::TIME_SUNRISE){
+			return true;
+		}
+		return false;
 	}
 }

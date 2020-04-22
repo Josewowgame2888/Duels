@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels;
 
 use duels\utils\ZipIntegration;
@@ -6,6 +9,22 @@ use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\entity\Entity;
 use pocketmine\network\protocol\AddEntityPacket;
+
+use function mkdir;
+use function file_exists;
+use function is_dir;
+use function opendir;
+use function readdir;
+use function closedir;
+use function scandir;
+use function str_replace;
+use function max;
+use function count;
+use function array_flip;
+use function mt_rand;
+use function asort;
+use function floor;
+use function key;
 
 class Arena 
 {

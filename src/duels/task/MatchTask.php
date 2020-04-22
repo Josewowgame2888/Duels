@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace duels\task;
 
 use duels\Duels;
@@ -8,6 +11,9 @@ use pocketmine\entity\Entity;
 use pocketmine\level\sound\BlazeShootSound;
 use pocketmine\math\Vector3;
 use pocketmine\scheduler\Task;
+
+use function str_repeat;
+
 class MatchTask extends Task
 {
 
